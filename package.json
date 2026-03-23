@@ -9,7 +9,7 @@
     "dev": "cls && nodemon src/server.js"
   },
   "keywords": [],
-  "author": "Yasmin",
+  "author": "Fabio Trevizolli",
   "license": "MIT",
   "dependencies": {
     "@prisma/adapter-pg": "^7.3.0",
