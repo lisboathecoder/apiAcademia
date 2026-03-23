@@ -1,7 +1,15 @@
 import prisma from '../utils/prismaClient.js';
 
 export default class TreinoModel {
-    constructor({ id = null, nome, descricao = true, categoria, foto = null, aluno = null, alunoId = null } = {}) {
+    constructor({
+        id = null,
+        nome,
+        descricao = true,
+        categoria,
+        foto = null,
+        aluno = null,
+        alunoId = null,
+    } = {}) {
         this.id = id;
         this.nome = nome;
         this.descricao = descricao;
@@ -27,7 +35,14 @@ export default class TreinoModel {
     async atualizar() {
         return prisma.treino.update({
             where: { id: this.id },
-            data: { nome: this.nome, descricao: this.descricao, categoria: this.categoria, foto: this.foto, aluno: this.aluno ,alunoId: this.alunoId },
+            data: {
+                nome: this.nome,
+                descricao: this.descricao,
+                categoria: this.categoria,
+                foto: this.foto,
+                aluno: this.aluno,
+                alunoId: this.alunoId,
+            },
         });
     }
 
@@ -38,27 +53,24 @@ export default class TreinoModel {
     static async buscarTodos(filtros = {}) {
         const where = {};
 
-        if (filtros.nome) {
-            where.nome = { contains: filtros.nome, mode: 'insensitive' };
-        }
-
-        if (filtros.descricao) {
-            where.descricao = { contains: filtros.descricao, mode: 'insensitive' };
-        }
-
+        if (filtros.nome) where.nome = { contains: filtros.nome, mode: 'insensitive' };
+        
         if (filtros.categoria) {
-            where.categoria = { contains: filtros.categoria, mode: 'insensitive' };
+            where.categoria = { in: filtros.categoria.split(',').map((c) => c.toUpperCase()) };
         }
-        if (filtros.foto) {
-            where.foto = { contains: filtros.foto, mode: 'insensitive' };
+        if (filtros.disponivel !== undefined) {
+            where.disponivel = filtros.disponivel === 'true';
         }
+        if (filtros.precoMin || filtros.precoMax) {
+            where.preco = {};
 
-        if (filtros.aluno) {
-            where.aluno = { contains: filtros.aluno, mode: 'insensitive' };
-        }
+            if (filtros.precoMin) {
+                where.preco.gte = Number(filtros.precoMin);
+            }
 
-        if (filtros.alunoId !== undefined) {
-            where.alunoId = parseFloat(filtros.alunoId);
+            if (filtros.precoMax) {
+                where.preco.lte = Number(filtros.precoMax);
+            }
         }
 
         return prisma.treino.findMany({ where });
@@ -70,5 +82,28 @@ export default class TreinoModel {
             return null;
         }
         return new TreinoModel(data);
+    }
+
+    static validarCategoria(categoria) {
+        const categoriaUpper = categoria.toUpperCase();
+        const categoriasValidas = ['MUSCULAÇÃO', 'CARDIO', 'FUNCIONAL', 'CROSSFIT'];
+        if (!categoriasValidas.includes(categoriaUpper)) {
+            throw new Error(
+                `Categoria inválida. Categorias aceitas: ${categoriasValidas.join(', ')}`,
+            );
+        }
+        return categoriaUpper;
+    }
+
+    static validarNome(nome) {
+        if (nome === undefined || nome === null) {
+            throw new Error('O campo "nome" é obrigatório!');
+        }
+    }
+
+    static validarPreco(preco) {
+        if (preco <= 0) {
+            throw new Error('o preço deve ser maior ou igual a 0');
+        }
     }
 }
