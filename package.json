@@ -1,7 +1,7 @@
 {
   "name": "apiAcademia",
   "version": "1.0.0",
-  "description": "",
+  "description": "api academia",
   "main": "server.js",
   "type": "module",
   "private": true,
