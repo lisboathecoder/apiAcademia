@@ -36,7 +36,7 @@ model Treino {
     categoria CategoriaTreino
     foto      String?
     aluno     Aluno           @relation(fields: [alunoId], references: [id])
-    alunoId   String
+    alunoId   Int
 
     @@map("treino")
 }
