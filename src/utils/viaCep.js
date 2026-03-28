@@ -20,4 +20,4 @@ const cepNormalizado = cep?.toString().match(/\d/g)?.join("") || "";
   return data?.erro ? null : data;
 };
 
-export default buscarEnderecoViaCep ;
+export { buscarEnderecoViaCep };

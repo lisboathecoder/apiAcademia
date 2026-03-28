@@ -1,5 +1,11 @@
 import prisma from "../utils/prismaClient.js";
 
+const normalizarCep = (cep) => {
+  if (cep === undefined || cep === null) return null;
+  const somenteDigitos = cep.toString().match(/\d/g)?.join("") || "";
+  return somenteDigitos.length === 8 ? somenteDigitos : null;
+};
+
 export default class AlunoModel {
   constructor({
     id,
@@ -26,13 +32,15 @@ export default class AlunoModel {
   }
 
   async criar() {
+    const cepNormalizado = normalizarCep(this.cep);
+
     return prisma.aluno.create({
       data: {
         nome: this.nome,
         email: this.email,
         cpf: this.cpf,
         telefone: this.telefone,
-        cep: this.cep,
+        cep: cepNormalizado,
         logradouro: this.logradouro,
         localidade: this.localidade,
         uf: this.uf,
@@ -42,6 +50,8 @@ export default class AlunoModel {
   }
 
   async atualizar() {
+    const cepNormalizado = normalizarCep(this.cep);
+
     return prisma.aluno.update({
       where: { id: this.id },
       data: {
@@ -49,7 +59,7 @@ export default class AlunoModel {
         email: this.email,
         cpf: this.cpf,
         telefone: this.telefone,
-        cep: this.cep,
+        cep: cepNormalizado,
         logradouro: this.logradouro,
         localidade: this.localidade,
         uf: this.uf,
@@ -81,7 +91,7 @@ export default class AlunoModel {
       where.localidade = { contains: filtros.localidade, mode: "insensitive" };
     }
     if (filtros.cep !== undefined) {
-      where.cep = parseInt(filtros.cep);
+      where.cep = normalizarCep(filtros.cep);
     }
 
     return prisma.aluno.findMany({ where });

@@ -1,4 +1,21 @@
 import AlunoModel from "../models/AlunoModel.js";
+import { buscarEnderecoViaCep } from "../utils/viaCep.js";
+
+const formatarCep = (cep) => {
+  const somenteDigitos = cep?.toString()
+  .match(/\d/g)?.join("") || "";
+  if (somenteDigitos.length !== 8) 
+    return cep;
+  return `${somenteDigitos.slice(0, 5)}-${somenteDigitos.slice(5)}`;
+};
+
+const formatarAlunoComCep = (aluno) => {
+  if (!aluno || typeof aluno !== "object") return aluno;
+  return {
+    ...aluno,
+    cep: formatarCep(aluno.cep),
+  };
+};
 
 export const criar = async (req, res) => {
   try {
@@ -25,12 +42,10 @@ export const criar = async (req, res) => {
     }
 
     if (nome.length > 100 || nome.length < 3) {
-      return res
-        .status(400)
-        .json({
-          error:
-            'O campo "nome" deve ter no mínimo 3 e no máximo 100 caracteres!',
-        });
+      return res.status(400).json({
+        error:
+          'O campo "nome" deve ter no mínimo 3 e no máximo 100 caracteres!',
+      });
     }
 
     if (!email) {
@@ -41,7 +56,7 @@ export const criar = async (req, res) => {
     }
     let endereco;
     if (cep) {
-      endereco = await buscarEnderecoPorCep(cep);
+      endereco = await buscarEnderecoViaCep(cep);
       if (!endereco) {
         return res
           .status(400)
@@ -64,17 +79,18 @@ export const criar = async (req, res) => {
       email,
       cpf,
       telefone,
-      cep,
-      logradouro,
-      localidade,
-      uf,
+      cep: endereco ? endereco.cep : cep,
+      logradouro: endereco ? endereco.logradouro : logradouro,
+      localidade: endereco ? endereco.localidade : localidade,
+      uf: endereco ? endereco.uf : uf,
       ativo,
     });
     const data = await aluno.criar();
 
-    return res
-      .status(201)
-      .json({ message: "Registro criado com sucesso!", data });
+    return res.status(201).json({
+      message: "Registro criado com sucesso!",
+      data: formatarAlunoComCep(data),
+    });
   } catch (error) {
     console.error("Erro ao criar:", error);
     return res
@@ -91,7 +107,7 @@ export const buscarTodos = async (req, res) => {
       return res.status(200).json({ message: "Nenhum registro encontrado." });
     }
 
-    return res.json(registros);
+    return res.json(registros.map(formatarAlunoComCep));
   } catch (error) {
     console.error("Erro ao buscar:", error);
     return res.status(500).json({ error: "Erro ao buscar registros." });
@@ -114,7 +130,7 @@ export const buscarPorId = async (req, res) => {
       return res.status(404).json({ error: "Registro não encontrado." });
     }
 
-    return res.json({ data: aluno });
+    return res.json({ data: formatarAlunoComCep(aluno) });
   } catch (error) {
     console.error("Erro ao buscar:", error);
     return res.status(500).json({ error: "Erro ao buscar registro." });
@@ -156,7 +172,24 @@ export const atualizar = async (req, res) => {
       aluno.telefone = req.body.telefone;
     }
     if (req.body.cep !== undefined) {
-      aluno.cep = req.body.cep;
+      const endereco = await buscarEnderecoViaCep(req.body.cep);
+      if (!endereco) {
+        return res
+          .status(400)
+          .json({ error: "CEP inválido ou não encontrado." });
+      }
+
+      aluno.cep = endereco.cep;
+
+      if (req.body.logradouro === undefined) {
+        aluno.logradouro = endereco.logradouro;
+      }
+      if (req.body.localidade === undefined) {
+        aluno.localidade = endereco.localidade;
+      }
+      if (req.body.uf === undefined) {
+        aluno.uf = endereco.uf;
+      }
     }
     if (req.body.logradouro !== undefined) {
       aluno.logradouro = req.body.logradouro;
@@ -182,7 +215,7 @@ export const atualizar = async (req, res) => {
 
     return res.json({
       message: `O registro "${data.nome}" foi atualizado com sucesso!`,
-      data,
+      data: formatarAlunoComCep(data),
     });
   } catch (error) {
     console.error("Erro ao atualizar:", error);
@@ -210,7 +243,7 @@ export const deletar = async (req, res) => {
 
     return res.json({
       message: `O registro "${aluno.nome}" foi deletado com sucesso!`,
-      deletado: aluno,
+      deletado: formatarAlunoComCep(aluno),
     });
   } catch (error) {
     console.error("Erro ao deletar:", error);
