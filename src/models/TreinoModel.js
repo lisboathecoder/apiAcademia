@@ -1,7 +1,15 @@
 import prisma from '../utils/prismaClient.js';
 
 export default class TreinoModel {
-    constructor({ id = null, nome = null, descricao = null, categoria = null, foto = null, aluno = null, alunoId = null } = {}) {
+    constructor({
+        id = null,
+        nome,
+        descricao = true,
+        categoria,
+        foto = null,
+        aluno = null,
+        alunoId = null,
+    } = {}) {
         this.id = id;
         this.nome = nome;
         this.descricao = descricao;
@@ -65,5 +73,28 @@ export default class TreinoModel {
             return null;
         }
         return new TreinoModel(data);
+    }
+
+    static validarCategoria(categoria) {
+        const categoriaUpper = categoria.toUpperCase();
+        const categoriasValidas = ['MUSCULAÇÃO', 'CARDIO', 'FUNCIONAL', 'CROSSFIT'];
+        if (!categoriasValidas.includes(categoriaUpper)) {
+            throw new Error(
+                `Categoria inválida. Categorias aceitas: ${categoriasValidas.join(', ')}`,
+            );
+        }
+        return categoriaUpper;
+    }
+
+    static validarNome(nome) {
+        if (nome === undefined || nome === null) {
+            throw new Error('O campo "nome" é obrigatório!');
+        }
+    }
+
+    static validarPreco(preco) {
+        if (preco <= 0) {
+            throw new Error('o preço deve ser maior ou igual a 0');
+        }
     }
 }
