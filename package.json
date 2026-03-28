@@ -1,12 +1,12 @@
 {
-  "name": "academiaAPI",
+  "name": "apiAcademia",
   "version": "1.0.0",
   "description": "Api de academia",
   "main": "server.js",
   "type": "module",
   "private": true,
   "scripts": {
-    "dev": "clear && nodemon src/server.js"
+    "dev": "cls && nodemon src/server.js"
   },
   "keywords": [],
   "author": "lisboathecoder",
