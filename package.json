@@ -1,7 +1,7 @@
 {
   "name": "apiAcademia",
   "version": "1.0.0",
-  "description": "Academia API",
+  "description": "Api de academia",
   "main": "server.js",
   "type": "module",
   "private": true,
@@ -9,7 +9,7 @@
     "dev": "cls && nodemon src/server.js"
   },
   "keywords": [],
-  "author": "Fabio Trevizolli",
+  "author": "lisboathecoder",
   "license": "MIT",
   "dependencies": {
     "@prisma/adapter-pg": "^7.3.0",
