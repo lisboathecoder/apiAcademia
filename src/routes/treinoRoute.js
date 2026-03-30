@@ -3,10 +3,10 @@ import * as controller from '../controllers/treinoController.js';
 
 const router = express.Router();
 
-router.post('/treinos', controller.criar);
-router.get('/treinos', controller.buscarTodos);
-router.get('/treinos/:id', controller.buscarPorId);
-router.put('/treinos/:id', controller.atualizar);
-router.delete('/treinos/:id', controller.deletar);
+router.post('/', controller.criar);
+router.get('/', controller.buscarTodos);
+router.get('/:id', controller.buscarPorId);
+router.put('/:id', controller.atualizar);
+router.delete('/:id', controller.deletar);
 
 export default router;

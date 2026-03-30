@@ -4,7 +4,7 @@ export default class TreinoModel {
     constructor({
         id = null,
         nome,
-        descricao = true,
+        descricao = '',
         categoria,
         foto = null,
         aluno = null,
