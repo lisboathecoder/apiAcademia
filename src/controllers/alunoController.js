@@ -1,6 +1,20 @@
 import AlunoModel from "../models/AlunoModel.js";
 import { buscarEnderecoViaCep } from "../utils/viaCep.js";
 
+/**
+ * 
+ * @typedef {object} ReqBodyAluno
+ * @property {string} nome.required
+ * @property {string} email.required
+ * @property {string} cpf.required
+ * @property {string} telefone.required
+ * @property {string} cep.required
+ * @property {string} logradouro
+ * @property {string} localidade
+ * @property {string} uf
+ * @property {boolean} ativo
+ */
+
 const formatarCep = (cep) => {
   const somenteDigitos = cep?.toString()
   .match(/\d/g)?.join("") || "";
@@ -16,6 +30,17 @@ const formatarAlunoComCep = (aluno) => {
     cep: formatarCep(aluno.cep),
   };
 };
+
+/**
+ * POST /alunos
+ * @tags Alunos
+ * @summary Cria um novo registro de aluno
+ * @description Endpoint responsável por cadastrar um novo aluno. O corpo da requisição deve conter os campos "nome", "email", "cpf", "telefone" e "cep".
+ * @param { ReqBodyAluno } request.body.required
+ * @return 201 - Registro criado com sucesso
+ * @return 400 - Erro de validação (ex: campo obrigatório ausente, CEP inválido)
+ * @return 500 - Erro interno do servidor
+ */
 
 export const criar = async (req, res) => {
   try {
@@ -99,6 +124,21 @@ export const criar = async (req, res) => {
   }
 };
 
+/**
+ * GET /alunos
+ * @tags Alunos
+ * @summary Busca todos os registros de aluno
+ * @description Endpoint responsável por buscar todos os registros de alunos. Aceita parâmetros de consulta para filtragem.
+ * @param {string} nome.query
+ * @param {string} email.query
+ * @param {number} cpf.query
+ * @param {number} telefone.query
+ * @param {string} localidade.query
+ * @param {string} cep.query
+ * @return 200 - Lista de registros encontrados
+ * @return 500 - Erro interno do servidor
+ */
+
 export const buscarTodos = async (req, res) => {
   try {
     const registros = await AlunoModel.buscarTodos(req.query);
@@ -113,6 +153,18 @@ export const buscarTodos = async (req, res) => {
     return res.status(500).json({ error: "Erro ao buscar registros." });
   }
 };
+
+/**
+ * GET /alunos/{id}
+ * @tags Alunos
+ * @summary Busca um registro de aluno por ID
+ * @description Endpoint responsável por buscar um registro de aluno específico com base no ID fornecido. O ID deve ser um número inteiro válido.
+ * @param {integer} id.path - O ID do registro a ser buscado
+ * @return 200 - Registro encontrado com sucesso
+ * @return 400 - ID inválido ou não fornecido
+ * @return 404 - Registro não encontrado
+ * @return 500 - Erro interno do servidor
+ */
 
 export const buscarPorId = async (req, res) => {
   try {
@@ -136,6 +188,19 @@ export const buscarPorId = async (req, res) => {
     return res.status(500).json({ error: "Erro ao buscar registro." });
   }
 };
+
+/**
+ * PUT /alunos/{id}
+ * @tags Alunos
+ * @summary Atualiza um registro de aluno por ID
+ * @description Endpoint responsável por atualizar um registro de aluno específico com base no ID fornecido. O ID deve ser um número inteiro válido.
+ * @param {integer} id.path.required - O ID do registro a ser atualizado
+ * @param { ReqBodyAluno } request.body.required
+ * @return 200 - Registro atualizado com sucesso
+ * @return 400 - ID inválido ou não fornecido, corpo da requisição vazio ou dados inválidos
+ * @return 404 - Registro não encontrado para atualizar
+ * @return 500 - Erro interno do servidor
+ */
 
 export const atualizar = async (req, res) => {
   try {
@@ -222,6 +287,18 @@ export const atualizar = async (req, res) => {
     return res.status(500).json({ error: "Erro ao atualizar registro." });
   }
 };
+
+/**
+ * DELETE /alunos/{id}
+ * @tags Alunos
+ * @summary Deleta um registro de aluno por ID
+ * @description Endpoint responsável por deletar um registro de aluno específico com base no ID fornecido. O ID deve ser um número inteiro válido.
+ * @param {integer} id.path.required - O ID do registro a ser deletado
+ * @return 200 - Registro deletado com sucesso
+ * @return 400 - ID inválido ou não fornecido
+ * @return 404 - Registro não encontrado para deletar
+ * @return 500 - Erro interno do servidor
+ */
 
 export const deletar = async (req, res) => {
   try {
