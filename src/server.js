@@ -3,6 +3,7 @@ import 'dotenv/config';
 import alunoRoutes from './routes/alunoRoute.js';
 import treinoRoutes from './routes/treinoRoute.js';
 import docApiSwaggger from 'express-jsdoc-swagger';
+import auth from './utils/apiKey.js';
 
 const app = express();
 app.use(express.json());
@@ -24,9 +25,8 @@ app.get('/', (req, res) => {
 });
 
 // Rotas
-app.use('/alunos', alunoRoutes);
-app.use('/treinos', treinoRoutes);
-app.use('/treinos', treinoRoutes);
+app.use('/alunos', auth, alunoRoutes);
+app.use('/treinos', auth, treinoRoutes);
 
 app.use((req, res) => {
     res.status(404).json({ error: 'Rota não encontrada' });
