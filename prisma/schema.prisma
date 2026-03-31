@@ -37,6 +37,7 @@ model Treino {
     foto      String?
     aluno     Aluno           @relation(fields: [alunoId], references: [id])
     alunoId   Int
+    disponivel Boolean         @default(true)
 
     @@map("treino")
 }
