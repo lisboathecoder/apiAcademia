@@ -95,6 +95,10 @@ export const buscarPorId = async (req, res) => {
             return res.status(404).json({ error: 'Registro não encontrado.' });
         }
 
+        if (!treino.disponivel) {
+            return res.status(400).json({ error: 'Não é permitido utilizar item indisponível' });
+        }
+
         return res.json({ data: treino });
     } catch (error) {
         console.error('Erro ao buscar:', error);
