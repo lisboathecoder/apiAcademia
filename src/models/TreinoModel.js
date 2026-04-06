@@ -9,6 +9,7 @@ export default class TreinoModel {
         foto = null,
         aluno = null,
         alunoId = null,
+        disponivel = null,
     } = {}) {
         this.id = id;
         this.nome = nome;
@@ -17,6 +18,7 @@ export default class TreinoModel {
         this.foto = foto;
         this.aluno = aluno;
         this.alunoId = alunoId;
+        this.disponivel = disponivel;
     }
 
     async criar() {
@@ -26,7 +28,9 @@ export default class TreinoModel {
                 descricao: this.descricao,
                 categoria: this.categoria,
                 foto: this.foto,
+                aluno: this.aluno,
                 alunoId: this.alunoId,
+                disponivel: this.disponivel,
             },
         });
     }
@@ -39,7 +43,9 @@ export default class TreinoModel {
                 descricao: this.descricao,
                 categoria: this.categoria,
                 foto: this.foto,
+                aluno: this.aluno,
                 alunoId: this.alunoId,
+                disponivel: this.disponivel,
             },
         });
     }
@@ -59,6 +65,11 @@ export default class TreinoModel {
         if (filtros.categoria) {
             where.categoria = { contains: filtros.categoria, mode: 'insensitive' };
         }
+
+        if (filtros.aluno) {
+            where.aluno = filtros.aluno;
+        }
+
         if (filtros.alunoId) {
             where.alunoId = filtros.alunoId;
         }
