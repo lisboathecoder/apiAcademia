@@ -6,7 +6,7 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "dev": "clear && nodemon src/server.js"
+    "dev": "cls && nodemon src/server.js"
   },
   "keywords": [],
   "author": "lisboathecoder",
