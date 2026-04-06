@@ -108,4 +108,10 @@ export default class TreinoModel {
             throw new Error('o preço deve ser maior ou igual a 0');
         }
     }
+
+    static validarDisponibilidade(disponivel) {
+        if (disponivel === false) {
+            throw new Error('Não é permitido utilizar um item indisponível');
+        }
+    }
 }
