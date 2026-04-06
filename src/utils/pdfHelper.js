@@ -1,20 +1,22 @@
 import htmlPdf from 'html-pdf-node';
 import fs from 'fs';
 
-export async function gerarPdfAluno(aluno) {
-    let fotoHtml = '-';
+const gerarFotoHtml = (fotoPath, width = 120) => {
+  if (!fotoPath || !fs.existsSync(fotoPath)) {
+    return '-';
+  }
 
-    if (aluno.foto) {
-        const base64 = fs.readFileSync(aluno.foto).toString('base64');
-        fotoHtml = `<img src="data:image/jpeg;base64,${base64}" width="120"/>`;
-    }
+  const base64 = fs.readFileSync(fotoPath).toString('base64');
+  return `<img src="data:image/jpeg;base64,${base64}" width="${width}"/>`;
+};
+
+export async function gerarPdfAluno(aluno) {
+  const fotoHtml = gerarFotoHtml(aluno.foto, 120);
 
     const html = `
     <html>
     <body>
         <h1>Relatório do Aluno</h1>
-
-        <p>Foto: ${fotoHtml}</p>
         <p>Nome: ${aluno.nome}</p>
         <p>Email: ${aluno.email || '-'}</p>
         <p>CPF: ${aluno.cpf || '-'}</p>
@@ -70,12 +72,7 @@ export async function gerarPdfTodos(alunos) {
 }
 
 export async function gerarPdfTreino(treino) {
-    let fotoHtml = '-';
-
-    if (treino.foto) {
-        const base64 = fs.readFileSync(treino.foto).toString('base64');
-        fotoHtml = `<img src="data:image/jpeg;base64,${base64}" width="120"/>`;
-    }
+  const fotoHtml = gerarFotoHtml(treino.foto, 120);
 
     const html = `
   <html>
@@ -97,17 +94,17 @@ export async function gerarPdfTreino(treino) {
 
 export async function gerarPdfTodosTreinos(treinos) {
     const linhas = treinos
-        .map(
-            (t) =>
-                `<tr>
+    .map((t) => {
+      const fotoHtml = gerarFotoHtml(t.foto, 70);
+      return `<tr>
       <td>${t.id}</td>
       <td>${t.nome}</td>
       <td>${t.descricao || '-'}</td>
       <td>${t.categoria || '-'}</td>
-      <td>${t.foto || '-'}</td>
+    <td style="text-align: center;">${fotoHtml}</td>
       <td>${t.alunoId || '-'}</td>
-    </tr>`,
-        )
+  </tr>`;
+    })
         .join('');
 
     const html = `

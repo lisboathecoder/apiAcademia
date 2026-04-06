@@ -17,6 +17,7 @@ export default class AlunoModel {
     logradouro = null,
     localidade = null,
     uf = null,
+    foto = null,
     ativo = true,
   } = {}) {
     this.id = id;
@@ -28,6 +29,7 @@ export default class AlunoModel {
     this.logradouro = logradouro;
     this.localidade = localidade;
     this.uf = uf;
+    this.foto = foto;
     this.ativo = ativo;
   }
 
@@ -44,6 +46,7 @@ export default class AlunoModel {
         logradouro: this.logradouro,
         localidade: this.localidade,
         uf: this.uf,
+        foto: this.foto,
         ativo: this.ativo,
       },
     });
@@ -63,6 +66,7 @@ export default class AlunoModel {
         logradouro: this.logradouro,
         localidade: this.localidade,
         uf: this.uf,
+        foto: this.foto,
         ativo: this.ativo,
       },
     });

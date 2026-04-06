@@ -1,8 +1,7 @@
 import sharp from 'sharp';
 import multer from 'multer';
 import fs from 'fs';
-import path from 'path'
-import { fileURLToPath } from 'url';
+import path from 'path';
 
 const UPLOADS_DIR = './uploads';
 
@@ -13,8 +12,10 @@ if (!fs.existsSync(UPLOADS_DIR)) {
 const storage = multer.diskStorage({
     destination: (req, file, cb) => cb(null, UPLOADS_DIR),
     filename: (req, file, cb) => {
-        const ext = path.extname(file.originalname);
-        cb(null, `aluno_${req.params.id}_${Date.now()}${ext}`);
+        const ext = path.extname(file.originalname) || '.jpg';
+        const resource = req.baseUrl?.includes('treinos') ? 'treino' : 'aluno';
+        const idSegment = req.params?.id ? `_${req.params.id}` : '';
+        cb(null, `${resource}${idSegment}_${Date.now()}${ext}`);
     }
 });
 
@@ -31,7 +32,7 @@ export async function processarFoto(filePath) {
 }
 
 export function removerFoto(filePath) {
-    if (fs.existsSync(fileURLToPath)) {
-        fs.upLinkSync(filePath);
+    if (filePath && fs.existsSync(filePath)) {
+        fs.unlinkSync(filePath);
     }
 }
