@@ -58,9 +58,9 @@ export const buscarTodos = async (req, res) => {
     try {
         const registros = await TreinoModel.buscarTodos(req.query);
 
-         if (req.query.alunoId) {
-             registros = registros.filter((treino) => treino.disponivel);
-         }
+        if (req.query.alunoId) {
+            registros = registros.filter((treino) => treino.disponivel);
+        }
 
         if (!registros || registros.length === 0) {
             return res.status(200).json({ message: 'Nenhum treino encontrado.' });
