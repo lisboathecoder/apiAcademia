@@ -132,6 +132,10 @@ export const atualizar = async (req, res) => {
         if (req.body.descricao !== undefined) treino.descricao = req.body.descricao;
         if (req.body.foto !== undefined) treino.foto = req.body.foto;
 
+        if (!treino.disponivel) {
+            return res.status(400).json({ error: 'Não é permitido utilizar item indisponível' });
+        }
+
         const novoAlunoId = req.body.alunoId || req.body.Id;
         if (novoAlunoId !== undefined) {
             treino.alunoId = parseInt(novoAlunoId);
