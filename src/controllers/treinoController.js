@@ -176,6 +176,10 @@ export const deletar = async (req, res) => {
             return res.status(404).json({ error: 'Treino não encontrado para deletar.' });
         }
 
+        if (!treino.disponivel) {
+            return res.status(400).json({ error: 'Não é permitido utilizar item indisponível' });
+        }
+
         await treino.deletar();
 
         return res.json({ message: `O treino ${treino.nome} foi deletado com sucesso!`, deletado: treino });
