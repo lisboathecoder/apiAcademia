@@ -58,6 +58,10 @@ export const buscarTodos = async (req, res) => {
     try {
         const registros = await TreinoModel.buscarTodos(req.query);
 
+         if (req.query.alunoId) {
+             registros = registros.filter((treino) => treino.disponivel);
+         }
+
         if (!registros || registros.length === 0) {
             return res.status(200).json({ message: 'Nenhum treino encontrado.' });
         }
@@ -95,6 +99,10 @@ export const buscarPorId = async (req, res) => {
             return res.status(404).json({ error: 'Registro não encontrado.' });
         }
 
+        if (!treino.disponivel) {
+            return res.status(400).json({ error: 'Não é permitido utilizar item indisponível' });
+        }
+
         return res.json({ data: treino });
     } catch (error) {
         console.error('Erro ao buscar:', error);
@@ -127,6 +135,10 @@ export const atualizar = async (req, res) => {
         if (req.body.categoria !== undefined) treino.categoria = req.body.categoria;
         if (req.body.descricao !== undefined) treino.descricao = req.body.descricao;
         if (req.body.foto !== undefined) treino.foto = req.body.foto;
+
+        if (!treino.disponivel) {
+            return res.status(400).json({ error: 'Não é permitido utilizar item indisponível' });
+        }
 
         const novoAlunoId = req.body.alunoId || req.body.Id;
         if (novoAlunoId !== undefined) {
@@ -166,6 +178,10 @@ export const deletar = async (req, res) => {
 
         if (!treino) {
             return res.status(404).json({ error: 'Treino não encontrado para deletar.' });
+        }
+
+        if (!treino.disponivel) {
+            return res.status(400).json({ error: 'Não é permitido utilizar item indisponível' });
         }
 
         await treino.deletar();
