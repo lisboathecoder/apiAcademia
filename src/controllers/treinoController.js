@@ -1,26 +1,47 @@
 import TreinoModel from '../models/TreinoModel.js';
+import { processarFoto } from '../utils/fotoHelper.js';
 
 /**
  * @typedef {object} ReqBodyTreino
  * @property {string} nome.required
  * @property {number} alunoId.required
  * @property {string} categoria.required
+ * @property {string} descricao
+ * @property {string} foto
+ */
+
+/**
+ * @typedef {object} ReqBodyTreinoUpload
+ * @property {string} nome.required
+ * @property {number} alunoId.required
+ * @property {string} categoria.required
+ * @property {string} descricao
+ * @property {string} foto - Arquivo de foto do treino - binary
  */
 
 /**
  * POST /treinos
  * @tags Treinos
  * @summary Cria um novo registro de treino
- * @description Endpoint responsável por cadastrar um novo treino. O corpo da requisição deve conter os campos "nome", "categoria" e "alunoId".
- * @param { ReqBodyTreino } request.body.required
+ * @security ApiKeyAuth
+ * @description Endpoint responsável por cadastrar um novo treino. Para enviar foto, utilize multipart/form-data no campo "foto".
+ * @param {ReqBodyTreinoUpload} request.body.required - Dados do treino com foto - multipart/form-data
  * @return 201 - Treino criado com sucesso
  * @return 400 - Erro de validação (ex: campo obrigatório ausente)
  * @return 500 - Erro interno do servidor
  */
 
+
+
 export const criar = async (req, res) => {
     try {
-        const { nome, alunoId, categoria, descricao, foto } = req.body;
+        const body = req.body || {};
+        const { nome, alunoId, categoria, descricao } = body;
+        let foto = body.foto;
+
+        if (req.file?.path) {
+            foto = await processarFoto(req.file.path);
+        }
 
         if (!nome || !categoria || !alunoId) {
             return res.status(400).json({ error: 'Nome, categoria e alunoId são obrigatórios!' });
@@ -28,7 +49,7 @@ export const criar = async (req, res) => {
 
         const treino = new TreinoModel({
             nome,
-            alunoId: parseInt(alunoId),
+            alunoId: parseInt(alunoId, 10),
             categoria,
             descricao,
             foto,
@@ -46,6 +67,7 @@ export const criar = async (req, res) => {
  * GET /treinos
  * @tags Treinos
  * @summary Busca todos os registros de treino
+ * @security ApiKeyAuth
  * @description Endpoint responsável por buscar todos os registros de treino. Aceita parâmetros de consulta para filtragem.
  * @param {string} nome.query
  * @param {string} categoria.query
@@ -77,6 +99,7 @@ export const buscarTodos = async (req, res) => {
  * GET /treinos/{id}
  * @tags Treinos
  * @summary Busca um registro de treino por ID
+ * @security ApiKeyAuth
  * @description Endpoint responsável por buscar um treino específico com base no ID fornecido. O ID deve ser um número inteiro válido.
  * @param {integer} id.path - O ID do treino a ser buscado
  * @return 200 - Treino encontrado com sucesso
@@ -114,6 +137,7 @@ export const buscarPorId = async (req, res) => {
  * PUT /treinos/{id}
  * @tags Treinos
  * @summary Atualiza um registro de treino por ID
+ * @security ApiKeyAuth
  * @description Endpoint responsável por atualizar um treino específico com base no ID fornecido. O ID deve ser um número inteiro válido.
  * @param {integer} id.path.required - O ID do treino a ser atualizado
  * @param { ReqBodyTreino } request.body.required
@@ -158,6 +182,7 @@ export const atualizar = async (req, res) => {
  * DELETE /treinos/{id}
  * @tags Treinos
  * @summary Deleta um registro de treino por ID
+ * @security ApiKeyAuth
  * @description Endpoint responsável por deletar um treino específico com base no ID fornecido. O ID deve ser um número inteiro válido.
  * @param {integer} id.path.required - O ID do treino a ser deletado
  * @return 200 - Treino deletado com sucesso

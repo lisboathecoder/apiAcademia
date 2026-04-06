@@ -35,6 +35,7 @@ const formatarAlunoComCep = (aluno) => {
  * POST /alunos
  * @tags Alunos
  * @summary Cria um novo registro de aluno
+ * @security ApiKeyAuth
  * @description Endpoint responsável por cadastrar um novo aluno. O corpo da requisição deve conter os campos "nome", "email", "cpf", "telefone" e "cep".
  * @param { ReqBodyAluno } request.body.required
  * @return 201 - Registro criado com sucesso
@@ -128,6 +129,7 @@ export const criar = async (req, res) => {
  * GET /alunos
  * @tags Alunos
  * @summary Busca todos os registros de aluno
+ * @security ApiKeyAuth
  * @description Endpoint responsável por buscar todos os registros de alunos. Aceita parâmetros de consulta para filtragem.
  * @param {string} nome.query
  * @param {string} email.query
@@ -158,6 +160,7 @@ export const buscarTodos = async (req, res) => {
  * GET /alunos/{id}
  * @tags Alunos
  * @summary Busca um registro de aluno por ID
+ * @security ApiKeyAuth
  * @description Endpoint responsável por buscar um registro de aluno específico com base no ID fornecido. O ID deve ser um número inteiro válido.
  * @param {integer} id.path - O ID do registro a ser buscado
  * @return 200 - Registro encontrado com sucesso
@@ -193,6 +196,7 @@ export const buscarPorId = async (req, res) => {
  * PUT /alunos/{id}
  * @tags Alunos
  * @summary Atualiza um registro de aluno por ID
+ * @security ApiKeyAuth
  * @description Endpoint responsável por atualizar um registro de aluno específico com base no ID fornecido. O ID deve ser um número inteiro válido.
  * @param {integer} id.path.required - O ID do registro a ser atualizado
  * @param { ReqBodyAluno } request.body.required
@@ -292,6 +296,7 @@ export const atualizar = async (req, res) => {
  * DELETE /alunos/{id}
  * @tags Alunos
  * @summary Deleta um registro de aluno por ID
+ * @security ApiKeyAuth
  * @description Endpoint responsável por deletar um registro de aluno específico com base no ID fornecido. O ID deve ser um número inteiro válido.
  * @param {integer} id.path.required - O ID do registro a ser deletado
  * @return 200 - Registro deletado com sucesso
